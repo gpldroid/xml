@@ -34,6 +34,18 @@
       <data:post.body/>
     </div>
 
+    <b:if cond='data:blog.pageType == &quot;item&quot;'>
+      <div class='blog-post__comments'>
+        <b:if cond='data:post.allowComments'>
+          <a class='blog-post__comments-link' expr:href='data:post.addCommentUrl'>
+            <b:eval expr='data:post.numComments == 1 ? &quot;1 comment&quot; : data:post.numComments + &quot; comments&quot;'/>
+          </a>
+        <b:else/>
+          <span class='blog-post__comments-disabled'>Comments are closed.</span>
+        </b:if>
+      </div>
+    </b:if>
+
     <b:if cond='data:post.labels'>
       <footer class='blog-post__footer'>
         <div class='blog-post__labels' aria-label='Post labels'>
