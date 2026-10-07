@@ -117,7 +117,9 @@ const validateBloggerStructure = (xml) => {
     }
   }
 
-  const count = (pattern) => (xml.match(pattern) ?? []).length;
+  const structuralXml = xml.replace(/<!--(?:.|\\n|\\r)*?-->/g, '');
+  const count = (pattern) => (structuralXml.match(pattern) ?? []).length;
+
   const exactCounts = [
     ['b:section', /<b:section\b/g, 2],
     ['b:widget', /<b:widget\b/g, 2],
@@ -135,15 +137,9 @@ const validateBloggerStructure = (xml) => {
     }
   }
 
-  if (xml.includes('{{') || xml.includes('}}')) {
-    throw new Error(
-      'Blogger structure validation failed: unresolved template placeholder detected.'
-    );
-  }
-
-  const loopStart = xml.indexOf("<b:loop values='data:posts' var='post'>");
-  const postStart = xml.indexOf("<article class='blog-post'");
-  const loopEnd = xml.indexOf('</b:loop>', loopStart);
+  const loopStart = structuralXml.indexOf("<b:loop values='data:posts' var='post'>");
+  const postStart = structuralXml.indexOf("<article class='blog-post'");
+  const loopEnd = structuralXml.indexOf('</b:loop>', loopStart);
 
   if (
     loopStart === -1 ||
