@@ -1,6 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <html
   b:version='2'
+  b:defaultwidgetversion='2'
+  b:layoutsVersion='3'
+  b:responsive='true'
   class='v2'
   expr:dir='data:blog.languageDirection'
   xmlns='http://www.w3.org/1999/xhtml'
@@ -36,6 +39,7 @@
             <b:widget
               id='Blog1'
               type='Blog'
+              version='2'
               locked='true'
               title='Blog Posts'
               visible='true'>
