@@ -1,0 +1,47 @@
+<!--
+  Blogger Dev Architect - Post Component
+  --------------------------------------
+  Reusable Blogger post markup.
+
+  This fragment expects to be injected inside the Blog1 widget's
+  post loop/includable where data:post.* variables are available.
+-->
+
+<article class='blog-post' expr:id='&quot;post-&quot; + data:post.id'>
+  <header class='blog-post__header'>
+    <h2 class='blog-post__title'>
+      <a class='blog-post__title-link' expr:href='data:post.url'>
+        <data:post.title/>
+      </a>
+    </h2>
+
+    <div class='blog-post__meta'>
+      <span class='blog-post__date'>
+        <data:post.timestamp/>
+      </span>
+
+      <b:if cond='data:post.author'>
+        <span class='blog-post__separator'>•</span>
+        <span class='blog-post__author'>
+          <data:post.author/>
+        </span>
+      </b:if>
+    </div>
+  </header>
+
+  <div class='blog-post__content'>
+    <data:post.body/>
+  </div>
+
+  <b:if cond='data:post.labels'>
+    <footer class='blog-post__footer'>
+      <div class='blog-post__labels' aria-label='Post labels'>
+        <b:loop values='data:post.labels' var='label'>
+          <a class='blog-post__label' expr:href='data:label.url'>
+            <data:label.name/>
+          </a>
+        </b:loop>
+      </div>
+    </footer>
+  </b:if>
+</article>
