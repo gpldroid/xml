@@ -44,11 +44,13 @@
               title='Blog Posts'
               visible='true'>
 
+              {{INCLUDE_COMPONENT:post}}
+
               <b:includable id='main' var='top'>
                 <div class='blog-posts'>
                   <b:if cond='data:posts'>
                     <b:loop values='data:posts' var='post'>
-                      {{INCLUDE_COMPONENT:post}}
+                      <b:include data='post' name='post'/>
                     </b:loop>
                   <b:else/>
                     <div class='blog-post blog-post--empty'>
