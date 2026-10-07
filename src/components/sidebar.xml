@@ -16,7 +16,14 @@
     <b:widget
       id='HTML1'
       type='HTML'
+      version='2'
       title='Sidebar'
-      visible='true'/>
+      visible='true'>
+      <b:includable id='main'>
+        <div class='widget-content'>
+          <data:content/>
+        </div>
+      </b:includable>
+    </b:widget>
   </b:section>
 </aside>
