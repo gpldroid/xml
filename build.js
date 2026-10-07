@@ -147,6 +147,9 @@ const validateBloggerStructure = (xml) => {
     ['Blog1 widget type', /<b:widget\b[^>]*\bid=['"]Blog1['"][^>]*\btype=['"]Blog['"]/],
     ['HTML1 widget type', /<b:widget\b[^>]*\bid=['"]HTML1['"][^>]*\btype=['"]HTML['"]/],
     ['Blog1 main includable', /<b:includable\b[^>]*\bid=['"]main['"][^>]*\bvar=['"]top['"]/]
+    ['Blog1 widget version', /<b:widget\b[^>]*\bid=['"]Blog1['"][^>]*\btype=['"]Blog['"][^>]*\bversion=['"]2['"]/],
+    ['HTML1 widget version', /<b:widget\b[^>]*\bid=['"]HTML1['"][^>]*\btype=['"]HTML['"][^>]*\bversion=['"]2['"]/],
+    ['HTML1 main includable', /<b:widget\b[^>]*\bid=['"]HTML1['"][\s\S]*?<b:includable\b[^>]*\bid=['"]main['"]/]
   ];
 
   for (const [label, pattern] of structuralChecks) {
