@@ -117,7 +117,7 @@ const validateBloggerStructure = (xml) => {
     }
   }
 
-  const structuralXml = xml.replace(/<!--(?:.|\\n|\\r)*?-->/g, '');
+  const structuralXml = xml.replace(/<!--[\\s\\S]*?-->/g, '');
   const count = (pattern) => (structuralXml.match(pattern) ?? []).length;
 
   const exactCounts = [
