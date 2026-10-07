@@ -3,6 +3,7 @@
 <html
   b:css='false'
   b:defaultwidgetversion='2'
+  b:js='true'
   b:layoutsVersion='3'
   b:responsive='true'
   b:templateVersion='1.0.0'
@@ -19,12 +20,28 @@
     <title><data:blog.pageTitle/></title>
     <meta expr:content='data:blog.metaDescription' name='description'/>
     <link expr:href='data:blog.url' rel='canonical'/>
-    <b:skin><![CDATA[
-      /* {{INCLUDE_CSS}} */
-    ]]></b:skin>
+    <b:if cond='!data:view.isLayoutMode'>
+      <b:skin><![CDATA[
+        {{INCLUDE_CSS}}
+      ]]></b:skin>
+    </b:if>
+    <b:if cond='data:view.isLayoutMode'>
+      <b:template-skin><![CDATA[
+        body#layout { min-width: 0 !important; }
+        body#layout .site-header,
+        body#layout .site-navigation,
+        body#layout .site-main,
+        body#layout .site-footer { display: block !important; }
+        body#layout .content-layout { display: block !important; }
+        body#layout .content-area { width: 100% !important; }
+        body#layout .sidebar-area { width: 100% !important; }
+        body#layout .section { margin: 0 0 18px !important; }
+      ]]></b:template-skin>
+    </b:if>
   </head>
   <body>
     {{INCLUDE_COMPONENT:header}}
+
     <main class='site-main' id='main-content'>
       <div class='container content-layout'>
         <section class='content-area' aria-label='Main content'>
@@ -40,62 +57,26 @@
                 <b:widget-setting name='showInlineAds'>false</b:widget-setting>
                 <b:widget-setting name='showShareButtons'>false</b:widget-setting>
               </b:widget-settings>
-              {{INCLUDE_COMPONENT:post}}
-              <b:includable id='status-message'>
-                <b:if cond='data:statusMessage'>
-                  <div class='blog-status-message' role='status'>
-                    <data:statusMessage/>
-                  </div>
-                </b:if>
-              </b:includable>
-
-              <b:includable id='nextprev'>
-                <b:if cond='data:newerPageUrl or data:olderPageUrl'>
-                  <nav class='blog-pagination' aria-label='Post navigation'>
-                    <b:if cond='data:newerPageUrl'>
-                      <a class='blog-pagination__link blog-pagination__link--newer' expr:href='data:newerPageUrl' rel='prev'>
-                        <data:newerPageTitle/>
-                      </a>
-                    </b:if>
-                    <b:if cond='data:olderPageUrl'>
-                      <a class='blog-pagination__link blog-pagination__link--older' expr:href='data:olderPageUrl' rel='next'>
-                        <data:olderPageTitle/>
-                      </a>
-                    </b:if>
-                  </nav>
-                </b:if>
-              </b:includable>
-
-              <b:includable id='main' var='top'>
-                <div class='blog-posts'>
-                  <b:if cond='data:posts'>
-                    <b:loop values='data:posts' var='post'>
-                      <b:include data='post' name='post'/>
-                    </b:loop>
-                  <b:else/>
-                    <div class='blog-post blog-post--empty'>
-                      <h2 class='blog-post__title'>No posts found</h2>
-                      <p class='blog-post__content'>There are no published posts to display.</p>
-                    </div>
-                  </b:if>
-                </div>
-                <b:include name='status-message'/>
-                <b:include name='nextprev'/>
-              </b:includable>
             </b:widget>
           </b:section>
         </section>
+
         {{INCLUDE_COMPONENT:sidebar}}
       </div>
     </main>
+
+    <b:section id='footer' class='footer' name='Footer' maxwidgets='3' showaddelement='yes'>
+    </b:section>
+
     <footer class='site-footer'>
       <div class='container site-footer__inner'>
         <p>&#169; <span class='current-year'>2026</span> <data:blog.title/>. All rights reserved.</p>
       </div>
     </footer>
+
     <button class='back-to-top' type='button' aria-label='Back to top' aria-hidden='true'>&#8593;</button>
     <script type='text/javascript'><![CDATA[
-      // {{INCLUDE_JS}}
+      {{INCLUDE_JS}}
     ]]></script>
   </body>
 </html>
