@@ -102,7 +102,7 @@ const validateBloggerStructure = (xml) => {
     "xmlns:b='http://www.google.com/2005/gml/b'",
     "xmlns:data='http://www.google.com/2005/gml/data'",
     "xmlns:expr='http://www.google.com/2005/gml/expr'",
-    "<b:skin>",
+    "<b:skin",
     "id='main'",
     "id='Blog1'",
     "id='sidebar'",
