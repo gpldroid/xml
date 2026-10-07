@@ -44,6 +44,7 @@
           <span class='blog-post__comments-disabled'>Comments are closed.</span>
         </b:if>
       </div>
+      <b:include data='post' name='comments'/>
     </b:if>
 
     <b:if cond='data:post.labels'>
@@ -58,4 +59,35 @@
       </footer>
     </b:if>
   </article>
+</b:includable>
+
+
+<b:includable id='comments' var='post'>
+  <section class='blog-comments' id='comments'>
+    <a name='comments'/>
+    <b:if cond='data:post.allowComments'>
+      <h3 class='blog-comments__title'><data:post.commentLabelFull/></h3>
+      <b:if cond='data:post.comments'>
+        <div class='blog-comments__content'>
+          <data:post.commentHtml/>
+        </div>
+      </b:if>
+      <b:if cond='data:post.embedCommentForm and data:post.allowNewComments'>
+        <div class='blog-comments__form'>
+          <a name='comment-form'/>
+          <p class='blog-comments__message'><data:blogCommentMessage/></p>
+          <a expr:href='data:post.commentFormIframeSrc' id='comment-editor-src'/>
+          <iframe allowtransparency='true' class='blogger-comment-from-post' expr:height='data:cmtIframeInitialHeight' frameborder='0' id='comment-editor' name='comment-editor' src='' width='100%'/>
+          <data:post.cmtfpIframe/>
+          <script type='text/javascript'>BLOG_CMT_createIframe(&#39;<data:post.appRpcRelayPath/>&#39;);</script>
+        </div>
+      <b:elseif cond='data:post.allowNewComments'/>
+        <p class='blog-comments__message'>
+          <a class='blog-comments__add' expr:href='data:post.addCommentUrl'><data:post.commentLabelFull/></a>
+        </p>
+      <b:else/>
+        <p class='blog-comments__message'><data:post.noNewCommentsText/></p>
+      </b:if>
+    </b:if>
+  </section>
 </b:includable>
