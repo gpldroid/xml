@@ -89,57 +89,61 @@
               title='Blog Posts'
               visible='true'>
 
+              <!--
+  Blogger Dev Architect - Post Component
+  --------------------------------------
+  Reusable Blog1 post includable.
+
+  This fragment is assembled inside Blog1 and receives the current
+  post object through var='post'.
+-->
+
+<b:includable id='post' var='post'>
+  <article class='blog-post' expr:id='&quot;post-&quot; + data:post.id'>
+    <header class='blog-post__header'>
+      <h2 class='blog-post__title'>
+        <a class='blog-post__title-link' expr:href='data:post.url'>
+          <data:post.title/>
+        </a>
+      </h2>
+
+      <div class='blog-post__meta'>
+        <span class='blog-post__date'>
+          <data:post.timestamp/>
+        </span>
+
+        <b:if cond='data:post.author'>
+          <span class='blog-post__separator'>•</span>
+          <span class='blog-post__author'>
+            <data:post.author/>
+          </span>
+        </b:if>
+      </div>
+    </header>
+
+    <div class='blog-post__content'>
+      <data:post.body/>
+    </div>
+
+    <b:if cond='data:post.labels'>
+      <footer class='blog-post__footer'>
+        <div class='blog-post__labels' aria-label='Post labels'>
+          <b:loop values='data:post.labels' var='label'>
+            <a class='blog-post__label' expr:href='data:label.url' rel='tag'>
+              <data:label.name/>
+            </a>
+          </b:loop>
+        </div>
+      </footer>
+    </b:if>
+  </article>
+</b:includable>
+
               <b:includable id='main' var='top'>
                 <div class='blog-posts'>
                   <b:if cond='data:posts'>
                     <b:loop values='data:posts' var='post'>
-                      <!--
-  Blogger Dev Architect - Post Component
-  --------------------------------------
-  Reusable Blogger post markup.
-
-  This fragment expects to be injected inside the Blog1 widget's
-  post loop/includable where data:post.* variables are available.
--->
-
-<article class='blog-post' expr:id='&quot;post-&quot; + data:post.id'>
-  <header class='blog-post__header'>
-    <h2 class='blog-post__title'>
-      <a class='blog-post__title-link' expr:href='data:post.url'>
-        <data:post.title/>
-      </a>
-    </h2>
-
-    <div class='blog-post__meta'>
-      <span class='blog-post__date'>
-        <data:post.timestamp/>
-      </span>
-
-      <b:if cond='data:post.author'>
-        <span class='blog-post__separator'>•</span>
-        <span class='blog-post__author'>
-          <data:post.author/>
-        </span>
-      </b:if>
-    </div>
-  </header>
-
-  <div class='blog-post__content'>
-    <data:post.body/>
-  </div>
-
-  <b:if cond='data:post.labels'>
-    <footer class='blog-post__footer'>
-      <div class='blog-post__labels' aria-label='Post labels'>
-        <b:loop values='data:post.labels' var='label'>
-          <a class='blog-post__label' expr:href='data:label.url'>
-            <data:label.name/>
-          </a>
-        </b:loop>
-      </div>
-    </footer>
-  </b:if>
-</article>
+                      <b:include data='post' name='post'/>
                     </b:loop>
                   <b:else/>
                     <div class='blog-post blog-post--empty'>
@@ -157,10 +161,7 @@
         <!--
   Blogger Dev Architect - Sidebar Component
   ------------------------------------------
-  Reusable sidebar wrapper.
-
-  The Blogger <b:section> remains here because it is a valid top-level
-  theme component and must not be duplicated by src/theme.xml.
+  Editable HTML sidebar widget.
 -->
 
 <aside class='sidebar-area' aria-label='Sidebar'>
@@ -173,6 +174,7 @@
       id='HTML1'
       type='HTML'
       version='2'
+      locked='false'
       title='Sidebar'
       visible='true'>
       <b:includable id='main'>
