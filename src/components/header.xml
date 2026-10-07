@@ -1,0 +1,46 @@
+<!--
+  Blogger Dev Architect - Header Component
+  ----------------------------------------
+  Reusable header markup.
+  Blogger-specific widgets remain in src/theme.xml so this fragment
+  can be safely assembled by build.js without invalid nesting.
+-->
+
+<header class='site-header' id='site-header'>
+  <div class='container site-header__inner'>
+    <div class='site-branding'>
+      <a class='site-branding__link' expr:href='data:blog.homepageUrl' rel='home'>
+        <span class='site-branding__title'><data:blog.title/></span>
+        <span class='site-branding__description'><data:blog.description/></span>
+      </a>
+    </div>
+
+    <button
+      class='menu-toggle'
+      type='button'
+      aria-controls='site-navigation'
+      aria-expanded='false'
+      aria-label='Toggle navigation'>
+      <span class='menu-toggle__line'></span>
+      <span class='menu-toggle__line'></span>
+      <span class='menu-toggle__line'></span>
+    </button>
+
+    <nav
+      class='site-navigation'
+      id='site-navigation'
+      aria-label='Primary navigation'>
+      <ul class='site-navigation__list'>
+        <li class='site-navigation__item'>
+          <a class='site-navigation__link' expr:href='data:blog.homepageUrl'>Home</a>
+        </li>
+        <li class='site-navigation__item'>
+          <a class='site-navigation__link' expr:href='data:blog.homepageUrl + &quot;p/about.html&quot;'>About</a>
+        </li>
+        <li class='site-navigation__item'>
+          <a class='site-navigation__link' expr:href='data:blog.homepageUrl + &quot;p/contact.html&quot;'>Contact</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
