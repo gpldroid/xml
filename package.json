@@ -5,7 +5,7 @@
   "description": "Modular Blogger XML theme build pipeline.",
   "type": "module",
   "engines": {
-    "node": ">=20 <21"
+    "node": ">=24 <25"
   },
   "scripts": {
     "build": "node build.js",
