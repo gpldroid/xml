@@ -51,4 +51,6 @@ jobs:
             exit 0
           fi
           git commit -m "chore: build Blogger theme"
+          git fetch origin main
+          git rebase origin/main
           git push
