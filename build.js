@@ -110,16 +110,18 @@ const validateBloggerStructure = (xml) => {
     throw new Error(`Blogger structure validation failed: expected 4 widgets, found ${widgetIds.length}.`);
   }
 
+  // Blogger sections may contain only widgets plus whitespace/comments.
   for (const [, content] of sectionMatches) {
-    const widgetOnly = content
+    const withoutWidgets = content
       .replace(/<b:widget(?=\s|>)[\s\S]*?<\/b:widget>/g, '')
+      .replace(/<!--[\s\S]*?-->/g, '')
       .trim();
-    if (widgetOnly && !/^$/.test(widgetOnly)) {
+    if (withoutWidgets) {
       throw new Error('Blogger structure validation failed: b:section contains non-widget content.');
     }
   }
 
-  if (/<b:widget-setting[\s\S]*?\/b:widget-setting>/.test(structuralXml) === false) {
+  if (!/<b:widget-setting\b/.test(structuralXml)) {
     throw new Error('Blogger structure validation failed: widget settings are missing.');
   }
 
