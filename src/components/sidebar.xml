@@ -1,28 +1,9 @@
-<!--
-  Blogger Dev Architect - Sidebar Component
-  ------------------------------------------
-  Editable HTML sidebar widget.
--->
-
 <aside class='sidebar-area' aria-label='Sidebar'>
-  <b:section
-    id='sidebar'
-    class='sidebar'
-    name='Sidebar'
-    maxwidgets='5'
-    showaddelement='yes'>
-    <b:widget
-      id='HTML1'
-      type='HTML'
-      version='2'
-      locked='false'
-      title='Sidebar'
-      visible='true'>
-      <b:includable id='main'>
-        <div class='widget-content'>
-          <data:content/>
-        </div>
-      </b:includable>
+  <b:section id='sidebar' class='sidebar' name='Sidebar' preferred='yes' maxwidgets='5' showaddelement='yes'>
+    <b:widget id='HTML1' type='HTML' version='2' locked='false' title='Sidebar' visible='true'>
+      <b:widget-settings>
+        <b:widget-setting name='content'><![CDATA[]]></b:widget-setting>
+      </b:widget-settings>
     </b:widget>
   </b:section>
 </aside>
