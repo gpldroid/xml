@@ -153,6 +153,10 @@ const validateBloggerStructure = (xml) => {
     ['Navigation section id', /<b:section(?=\s|>)[^>]*\bid=['"]navigation['"]/],
     ['main section id', /<b:section(?=\s|>)[^>]*\bid=['"]main['"]/],
     ['sidebar section id', /<b:section(?=\s|>)[^>]*\bid=['"]sidebar['"]/],
+    ['Header section name', /<b:section(?=\s|>)[^>]*\bid=['"]header['"][^>]*\bname=['"]Header['"]/],
+    ['Navigation section name', /<b:section(?=\s|>)[^>]*\bid=['"]navigation['"][^>]*\bname=['"]Navigation['"]/],
+    ['Main section name', /<b:section(?=\s|>)[^>]*\bid=['"]main['"][^>]*\bname=['"]Main['"]/],
+    ['Sidebar section name', /<b:section(?=\s|>)[^>]*\bid=['"]sidebar['"][^>]*\bname=['"]Sidebar['"]/],
     ['Blog1 widget type', /<b:widget(?=\s|>)[^>]*\bid=['"]Blog1['"][^>]*\btype=['"]Blog['"]/],
     ['HTML1 widget type', /<b:widget(?=\s|>)[^>]*\bid=['"]HTML1['"][^>]*\btype=['"]HTML['"]/],
     ['Header1 widget type', /<b:widget(?=\s|>)[^>]*\bid=['"]Header1['"][^>]*\btype=['"]Header['"]/],
@@ -178,6 +182,14 @@ const validateBloggerStructure = (xml) => {
       throw new Error(
         `Blogger structure validation failed: missing or invalid ${label}.`
       );
+    }
+  }
+
+  const sections = [...structuralXml.matchAll(/<b:section(?=\s|>)[^>]*>([\s\S]*?)<\/b:section>/g)].map((match) => match[1]);
+  for (const sectionContent of sections) {
+    const widgetStripped = sectionContent.replace(/<b:widget(?=\s|>)[\s\S]*?<\/b:widget>/g, '');
+    if (/<(?:b:|data:|expr:)/.test(widgetStripped) || /<\/?[A-Za-z][^>]*>/.test(widgetStripped)) {
+      throw new Error('Blogger structure validation failed: a b:section contains content outside its b:widget children.');
     }
   }
 
