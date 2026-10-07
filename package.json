@@ -9,7 +9,7 @@
     "validate": "node build.js --validate-only"
   },
   "dependencies": {
-    "clean-css": "^7.3.0",
+    "clean-css": "^5.3.3",
     "fast-xml-parser": "^5.3.2",
     "terser": "^5.44.1"
   }
