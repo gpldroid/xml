@@ -1,46 +1,70 @@
-<!--
-  Blogger Dev Architect - Header Component
-  ----------------------------------------
-  Reusable header markup.
-  Blogger-specific widgets remain in src/theme.xml so this fragment
-  can be safely assembled by build.js without invalid nesting.
--->
-
+<!-- Native Blogger Header + PageList components. -->
 <header class='site-header' id='site-header'>
   <div class='container site-header__inner'>
-    <div class='site-branding'>
-      <a class='site-branding__link' expr:href='data:blog.homepageUrl' rel='home'>
-        <span class='site-branding__title'><data:blog.title/></span>
-        <span class='site-branding__description'><data:blog.description/></span>
-      </a>
-    </div>
+    <b:section id='header' class='header' name='Header' maxwidgets='1' showaddelement='no'>
+      <b:widget id='Header1' type='Header' version='2' locked='false' title='Blog Header' visible='true'>
+        <b:widget-settings>
+          <b:widget-setting name='displayUrl'/>
+          <b:widget-setting name='displayHeight'>0</b:widget-setting>
+          <b:widget-setting name='sectionWidth'>-1</b:widget-setting>
+          <b:widget-setting name='useImage'>false</b:widget-setting>
+          <b:widget-setting name='shrinkToFit'>false</b:widget-setting>
+          <b:widget-setting name='imagePlacement'>BEHIND</b:widget-setting>
+          <b:widget-setting name='displayWidth'>0</b:widget-setting>
+        </b:widget-settings>
+        <b:includable id='main'>
+          <div class='site-branding'>
+            <b:if cond='data:view.isHomepage'>
+              <h1 class='site-branding__title'>
+                <a class='site-branding__link' expr:href='data:blog.homepageUrl' rel='home'><data:title/></a>
+              </h1>
+            <b:else/>
+              <p class='site-branding__title'>
+                <a class='site-branding__link' expr:href='data:blog.homepageUrl' rel='home'><data:title/></a>
+              </p>
+            </b:if>
+            <b:if cond='data:description'>
+              <p class='site-branding__description'><data:description/></p>
+            </b:if>
+          </div>
+        </b:includable>
+        <b:includable id='description'>
+          <div class='descriptionwrapper'><p class='description'><span><data:description/></span></p></div>
+        </b:includable>
+        <b:includable id='title'>
+          <b:tag cond='data:blog.url != data:blog.homepageUrl' expr:href='data:blog.homepageUrl' name='a'><data:title/></b:tag>
+        </b:includable>
+      </b:widget>
+    </b:section>
 
-    <button
-      class='menu-toggle'
-      type='button'
-      aria-controls='site-navigation'
-      aria-expanded='false'
-      aria-label='Toggle navigation'>
+    <button class='menu-toggle' type='button' aria-controls='site-navigation' aria-expanded='false' aria-label='Toggle navigation'>
       <span class='menu-toggle__line'></span>
       <span class='menu-toggle__line'></span>
       <span class='menu-toggle__line'></span>
     </button>
 
-    <nav
-      class='site-navigation'
-      id='site-navigation'
-      aria-label='Primary navigation'>
-      <ul class='site-navigation__list'>
-        <li class='site-navigation__item'>
-          <a class='site-navigation__link' expr:href='data:blog.homepageUrl'>Home</a>
-        </li>
-        <li class='site-navigation__item'>
-          <a class='site-navigation__link' expr:href='data:blog.homepageUrl + &quot;p/about.html&quot;'>About</a>
-        </li>
-        <li class='site-navigation__item'>
-          <a class='site-navigation__link' expr:href='data:blog.homepageUrl + &quot;p/contact.html&quot;'>Contact</a>
-        </li>
-      </ul>
+    <nav class='site-navigation' id='site-navigation' aria-label='Primary navigation'>
+      <b:section id='navigation' class='navigation' name='Navigation' maxwidgets='1' showaddelement='no'>
+        <b:widget id='PageList1' type='PageList' version='2' locked='false' title='Pages' visible='true'>
+          <b:widget-settings>
+            <b:widget-setting name='pageListJson'><![CDATA[{}]]></b:widget-setting>
+            <b:widget-setting name='homeTitle'>Home</b:widget-setting>
+          </b:widget-settings>
+          <b:includable id='main'><b:include name='content'/></b:includable>
+          <b:includable id='content'>
+            <ul class='site-navigation__list'>
+              <b:loop values='data:links' var='link'>
+                <li class='site-navigation__item'>
+                  <a class='site-navigation__link' expr:href='data:link.href'>
+                    <b:class cond='data:link.isCurrentPage' name='is-active'/>
+                    <data:link.title/>
+                  </a>
+                </li>
+              </b:loop>
+            </ul>
+          </b:includable>
+        </b:widget>
+      </b:section>
     </nav>
   </div>
 </header>
