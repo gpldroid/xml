@@ -1,0 +1,22 @@
+<!--
+  Blogger Dev Architect - Sidebar Component
+  ------------------------------------------
+  Reusable sidebar wrapper.
+
+  The Blogger <b:section> remains here because it is a valid top-level
+  theme component and must not be duplicated by src/theme.xml.
+-->
+
+<aside class='sidebar-area' aria-label='Sidebar'>
+  <b:section
+    id='sidebar'
+    class='sidebar'
+    maxwidgets='5'
+    showaddelement='yes'>
+    <b:widget
+      id='HTML1'
+      type='HTML'
+      title='Sidebar'
+      visible='true'/>
+  </b:section>
+</aside>
