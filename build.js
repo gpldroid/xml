@@ -157,9 +157,9 @@ const validateBloggerStructure = (xml) => {
     }
   }
 
-  const widgetIds = [...structuralXml.matchAll(/<b:widget\\b[^>]*\\bid=['"]([^'"]+)['"]/g)]
+  const widgetIds = [...structuralXml.matchAll(/<b:widget\b[^>]*\\bid=['"]([^'"]+)['"]/g)]
     .map((match) => match[1]);
-  const sectionIds = [...structuralXml.matchAll(/<b:section\\b[^>]*\\bid=['"]([^'"]+)['"]/g)]
+  const sectionIds = [...structuralXml.matchAll(/<b:section\b[^>]*\\bid=['"]([^'"]+)['"]/g)]
     .map((match) => match[1]);
 
   const assertUnique = (label, values) => {
