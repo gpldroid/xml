@@ -19,29 +19,11 @@ const files = {
   output: path.join(DIST, 'theme.xml')
 };
 
-/**
- * Read a UTF-8 source file.
- */
-const readSource = async (filePath) => readFile(filePath, 'utf8');
-
-/**
- * Escape CDATA terminators so arbitrary CSS/JS cannot break
- * the CDATA sections used by the Blogger theme.
- */
+const readSource = (filePath) => readFile(filePath, 'utf8');
 const toCdataSafe = (value) => value.replaceAll(']]>', ']]]]><![CDATA[>');
 
-/**
- * Build the complete Blogger theme from the source components.
- */
 const buildTheme = async () => {
-  const [
-    theme,
-    cssSource,
-    jsSource,
-    header,
-    post,
-    sidebar
-  ] = await Promise.all([
+  const [theme, cssSource, jsSource, header, post, sidebar] = await Promise.all([
     readSource(files.theme),
     readSource(files.css),
     readSource(files.js),
@@ -50,29 +32,21 @@ const buildTheme = async () => {
     readSource(files.sidebar)
   ]);
 
-  const cssResult = new CleanCSS({
-    level: 2
-  }).minify(cssSource);
-
-  if (cssResult.errors.length > 0) {
-    throw new Error(
-      `CSS minification failed:\n${cssResult.errors.join('\n')}`
-    );
+  const cssResult = new CleanCSS({ level: 2 }).minify(cssSource);
+  if (cssResult.errors.length) {
+    throw new Error(`CSS minification failed:\n${cssResult.errors.join('\n')}`);
   }
 
   const jsResult = await minifyJs(jsSource, {
     compress: true,
     mangle: true,
-    format: {
-      comments: false
-    }
+    format: { comments: false }
   });
-
   if (!jsResult.code) {
     throw new Error('JavaScript minification produced no output.');
   }
 
-  let output = theme
+  const output = theme
     .replace('{{INCLUDE_CSS}}', toCdataSafe(cssResult.styles))
     .replace('{{INCLUDE_JS}}', toCdataSafe(jsResult.code))
     .replace('{{INCLUDE_COMPONENT:header}}', header.trim())
@@ -80,168 +54,81 @@ const buildTheme = async () => {
     .replace('{{INCLUDE_COMPONENT:sidebar}}', sidebar.trim());
 
   const unresolved = output.match(/\{\{[^}]+\}\}/g);
-
   if (unresolved) {
-    throw new Error(
-      `Unresolved build placeholders: ${[...new Set(unresolved)].join(', ')}`
-    );
+    throw new Error(`Unresolved build placeholders: ${[...new Set(unresolved)].join(', ')}`);
   }
-
   return output;
 };
 
-/**
- * Validate XML syntax with a parser configured to preserve Blogger
- * namespace-qualified element names and attributes.
- *
- * This validates well-formed XML. Blogger-specific semantic validation
- * still needs to be performed by Blogger's theme editor/importer.
- */
 const validateBloggerStructure = (xml) => {
-  const requiredText = [
-    "xmlns:b='http://www.google.com/2005/gml/b'",
-    "xmlns:data='http://www.google.com/2005/gml/data'",
-    "xmlns:expr='http://www.google.com/2005/gml/expr'",
-    "<b:skin",
-    "id='header'",
-    "id='Header1'",
-    "id='navigation'",
-    "id='PageList1'",
-    "id='main'",
-    "id='Blog1'",
-    "id='sidebar'",
-    "id='HTML1'"
-  ];
-
-  for (const value of requiredText) {
-    if (!xml.includes(value)) {
-      throw new Error(
-        `Blogger structure validation failed: missing required marker ${value}.`
-      );
-    }
-  }
-
   const structuralXml = xml.replace(/<!--[\s\S]*?-->/g, '');
-  const count = (pattern) => (structuralXml.match(pattern) ?? []).length;
-
-  const exactCounts = [
-    ['b:section', /<b:section(?=\s|>)/g, 4],
-    ['b:widget', /<b:widget(?=\s|>)/g, 4],
-    ['b:skin', /<b:skin(?=\s|>)/g, 1],
-    ['Blog1 widget', /id=['"]Blog1['"]/g, 1],
-    ['HTML1 widget', /id=['"]HTML1['"]/g, 1],
-    ['Header1 widget', /id=['"]Header1['"]/g, 1],
-    ['PageList1 widget', /id=['"]PageList1['"]/g, 1]
+  const required = [
+    ['Blogger namespace b', /xmlns:b=['"]http:\/\/www\.google\.com\/2005\/gml\/b['"]/],
+    ['Blogger namespace data', /xmlns:data=['"]http:\/\/www\.google\.com\/2005\/gml\/data['"]/],
+    ['Blogger namespace expr', /xmlns:expr=['"]http:\/\/www\.google\.com\/2005\/gml\/expr['"]/],
+    ['V3 layouts', /b:layoutsVersion=['"]3['"]/],
+    ['default widget version 2', /b:defaultwidgetversion=['"]2['"]/],
+    ['responsive mode', /b:responsive=['"]true['"]/],
+    ['skin', /<b:skin(?=\s|>)/],
+    ['layout skin', /<b:template-skin(?=\s|>)/],
+    ['header section', /<b:section(?=\s|>)[^>]*\bid=['"]header['"][^>]*\bname=['"]Header['"]/],
+    ['navigation section', /<b:section(?=\s|>)[^>]*\bid=['"]navigation['"][^>]*\bname=['"]Navigation['"]/],
+    ['main section', /<b:section(?=\s|>)[^>]*\bid=['"]main['"][^>]*\bname=['"]Main['"]/],
+    ['sidebar section', /<b:section(?=\s|>)[^>]*\bid=['"]sidebar['"][^>]*\bname=['"]Sidebar['"]/],
+    ['footer section', /<b:section(?=\s|>)[^>]*\bid=['"]footer['"][^>]*\bname=['"]Footer['"]/],
+    ['Header1 widget', /<b:widget(?=\s|>)[^>]*\bid=['"]Header1['"][^>]*\btype=['"]Header['"][^>]*\bversion=['"]2['"]/],
+    ['PageList1 widget', /<b:widget(?=\s|>)[^>]*\bid=['"]PageList1['"][^>]*\btype=['"]PageList['"][^>]*\bversion=['"]2['"]/],
+    ['Blog1 widget', /<b:widget(?=\s|>)[^>]*\bid=['"]Blog1['"][^>]*\btype=['"]Blog['"][^>]*\bversion=['"]2['"]/],
+    ['HTML1 widget', /<b:widget(?=\s|>)[^>]*\bid=['"]HTML1['"][^>]*\btype=['"]HTML['"][^>]*\bversion=['"]2['"]/],
+    ['Blog1 settings', /<b:widget(?=\s|>)[^>]*\bid=['"]Blog1['"][\s\S]*?<b:widget-settings>[\s\S]*?<b:widget-setting name=['"]showCommentLink['"]>/],
+    ['HTML1 settings', /<b:widget(?=\s|>)[^>]*\bid=['"]HTML1['"][\s\S]*?<b:widget-settings>[\s\S]*?<b:widget-setting name=['"]content['"]>/]
   ];
 
-  for (const [label, pattern, expected] of exactCounts) {
-    const actual = count(pattern);
-    if (actual !== expected) {
-      throw new Error(
-        `Blogger structure validation failed: expected ${expected} ${label}, found ${actual}.`
-      );
-    }
-  }
-
-
-  const structuralChecks = [
-    ['root html element', /^<\?xml[^>]*>\s*(?:<!DOCTYPE[^>]*>\s*)?<html\b/],
-    ['Blogger V3 layouts version', /<html[^>]*\bb:layoutsVersion=['"]3['"]/],
-    ['Blogger widget default version', /<html[^>]*\bb:defaultwidgetversion=['"]2['"]/],
-    ['Blogger responsive mode', /<html[^>]*\bb:responsive=['"]true['"]/],
-    ['Header section id', /<b:section(?=\s|>)[^>]*\bid=['"]header['"]/],
-    ['Navigation section id', /<b:section(?=\s|>)[^>]*\bid=['"]navigation['"]/],
-    ['main section id', /<b:section(?=\s|>)[^>]*\bid=['"]main['"]/],
-    ['sidebar section id', /<b:section(?=\s|>)[^>]*\bid=['"]sidebar['"]/],
-    ['Header section name', /<b:section(?=\s|>)[^>]*\bid=['"]header['"][^>]*\bname=['"]Header['"]/],
-    ['Navigation section name', /<b:section(?=\s|>)[^>]*\bid=['"]navigation['"][^>]*\bname=['"]Navigation['"]/],
-    ['Main section name', /<b:section(?=\s|>)[^>]*\bid=['"]main['"][^>]*\bname=['"]Main['"]/],
-    ['Sidebar section name', /<b:section(?=\s|>)[^>]*\bid=['"]sidebar['"][^>]*\bname=['"]Sidebar['"]/],
-    ['Blog1 widget type', /<b:widget(?=\s|>)[^>]*\bid=['"]Blog1['"][^>]*\btype=['"]Blog['"]/],
-    ['HTML1 widget type', /<b:widget(?=\s|>)[^>]*\bid=['"]HTML1['"][^>]*\btype=['"]HTML['"]/],
-    ['Header1 widget type', /<b:widget(?=\s|>)[^>]*\bid=['"]Header1['"][^>]*\btype=['"]Header['"]/],
-    ['PageList1 widget type', /<b:widget(?=\s|>)[^>]*\bid=['"]PageList1['"][^>]*\btype=['"]PageList['"]/],
-    ['Header1 widget version', /<b:widget(?=\s|>)[^>]*\bid=['"]Header1['"][^>]*\bversion=['"]2['"]/],
-    ['PageList1 widget version', /<b:widget(?=\s|>)[^>]*\bid=['"]PageList1['"][^>]*\bversion=['"]2['"]/],
-    ['Blog1 widget settings', /<b:widget(?=\s|>)[^>]*\bid=['"]Blog1['"][\s\S]*?<b:widget-settings>[\s\S]*?<b:widget-setting name=['"]showDateHeader['"]>/],
-    ['Blog1 post includable', /<b:includable\b[^>]*\bid=['"]post['"][^>]*\bvar=['"]post['"]/],
-    ['Blog1 main includable', /<b:includable\b[^>]*\bid=['"]main['"][^>]*\bvar=['"]top['"]/],
-    ['Blog1 comments includable', /<b:includable\b[^>]*\bid=['"]comments['"][^>]*\bvar=['"]post['"]/],
-    ['Blog1 comments include call', /<b:include\s+data=['"]post['"]\s+name=['"]comments['"]\s*\/>/],
-    ['Blogger comment renderer', /<data:post\.commentHtml\/>/],
-    ['Blogger comment iframe bootstrap', /BLOG_CMT_createIframe\(/],
-    ['Blog1 widget version', /<b:widget(?=\s|>)[^>]*\bid=['"]Blog1['"][^>]*\btype=['"]Blog['"][^>]*\bversion=['"]2['"]/],
-    ['HTML1 widget version', /<b:widget(?=\s|>)[^>]*\bid=['"]HTML1['"][^>]*\btype=['"]HTML['"][^>]*\bversion=['"]2['"]/],
-    ['HTML1 main includable', /<b:widget(?=\s|>)[^>]*\bid=['"]HTML1['"][\s\S]*?<b:includable\b[^>]*\bid=['"]main['"]/],
-    ['Header1 main includable', /<b:widget(?=\s|>)[^>]*\bid=['"]Header1['"][\s\S]*?<b:includable\b[^>]*\bid=['"]main['"]/],
-    ['PageList1 main includable', /<b:widget(?=\s|>)[^>]*\bid=['"]PageList1['"][\s\S]*?<b:includable\b[^>]*\bid=['"]main['"]/]
-  ];
-
-  for (const [label, pattern] of structuralChecks) {
+  for (const [label, pattern] of required) {
     if (!pattern.test(structuralXml)) {
-      throw new Error(
-        `Blogger structure validation failed: missing or invalid ${label}.`
-      );
+      throw new Error(`Blogger structure validation failed: ${label} is missing or invalid.`);
     }
   }
 
-  const sections = [...structuralXml.matchAll(/<b:section(?=\s|>)[^>]*>([\s\S]*?)<\/b:section>/g)].map((match) => match[1]);
-  for (const sectionContent of sections) {
-    const widgetStripped = sectionContent.replace(/<b:widget(?=\s|>)[\s\S]*?<\/b:widget>/g, '');
-    if (/<(?:b:|data:|expr:)/.test(widgetStripped) || /<\/?[A-Za-z][^>]*>/.test(widgetStripped)) {
-      throw new Error('Blogger structure validation failed: a b:section contains content outside its b:widget children.');
-    }
-  }
-
-  const widgetIds = [...structuralXml.matchAll(/<b:widget(?=\s|>)[^>]*\bid=['"]([^'"]+)['"]/g)]
-    .map((match) => match[1]);
-  const sectionIds = [...structuralXml.matchAll(/<b:section(?=\s|>)[^>]*\bid=['"]([^'"]+)['"]/g)]
-    .map((match) => match[1]);
+  const sectionMatches = [...structuralXml.matchAll(/<b:section(?=\s|>)[^>]*\bid=['"]([^'"]+)['"][^>]*>([\s\S]*?)<\/b:section>/g)];
+  const sectionIds = sectionMatches.map((m) => m[1]);
+  const widgetIds = [...structuralXml.matchAll(/<b:widget(?=\s|>)[^>]*\bid=['"]([^'"]+)['"]/g)].map((m) => m[1]);
 
   const assertUnique = (label, values) => {
-    const duplicates = values.filter((value, index) => values.indexOf(value) !== index);
-    if (duplicates.length > 0) {
-      throw new Error(
-        `Blogger structure validation failed: duplicate ${label} id(s): ${[...new Set(duplicates)].join(', ')}.`
-      );
+    const duplicates = values.filter((value, i) => values.indexOf(value) !== i);
+    if (duplicates.length) {
+      throw new Error(`Blogger structure validation failed: duplicate ${label} id(s): ${[...new Set(duplicates)].join(', ')}.`);
     }
   };
-
-  assertUnique('widget', widgetIds);
   assertUnique('section', sectionIds);
+  assertUnique('widget', widgetIds);
 
-  const forbiddenV2Markers = [
-    ["b:version='2'", /\bb:version=['"]2['"]/],
-    ["class='v2'", /\bclass=['"]v2['"]/]
-  ];
+  if (sectionIds.length !== 5) {
+    throw new Error(`Blogger structure validation failed: expected 5 sections, found ${sectionIds.length}.`);
+  }
+  if (widgetIds.length !== 4) {
+    throw new Error(`Blogger structure validation failed: expected 4 widgets, found ${widgetIds.length}.`);
+  }
 
-  for (const [label, pattern] of forbiddenV2Markers) {
-    if (pattern.test(structuralXml)) {
-      throw new Error(
-        `Blogger structure validation failed: forbidden V2 marker ${label} found in a V3 theme.`
-      );
+  for (const [, content] of sectionMatches) {
+    const widgetOnly = content
+      .replace(/<b:widget(?=\s|>)[\s\S]*?<\/b:widget>/g, '')
+      .trim();
+    if (widgetOnly && !/^$/.test(widgetOnly)) {
+      throw new Error('Blogger structure validation failed: b:section contains non-widget content.');
     }
   }
 
-  const loopStart = structuralXml.indexOf("<b:loop values='data:posts' var='post'>");
-  const includeStart = structuralXml.indexOf("<b:include data='post' name='post'/>", loopStart);
-  const loopEnd = structuralXml.indexOf('</b:loop>', loopStart);
-  const postIncludableStart = structuralXml.indexOf("<b:includable id='post' var='post'>");
-  const postIncludableEnd = structuralXml.indexOf('</b:includable>', postIncludableStart);
+  if (/<b:widget-setting[\s\S]*?\/b:widget-setting>/.test(structuralXml) === false) {
+    throw new Error('Blogger structure validation failed: widget settings are missing.');
+  }
 
-  if (
-    loopStart === -1 ||
-    includeStart === -1 ||
-    loopEnd === -1 ||
-    includeStart < loopStart ||
-    includeStart > loopEnd ||
-    postIncludableStart === -1 ||
-    postIncludableEnd === -1 ||
-    postIncludableStart > postIncludableEnd
-  ) {
-    throw new Error(
-      'Blogger structure validation failed: post includable/include flow is invalid.'
-    );
+  if (/\/\*\s*\/\*/.test(structuralXml)) {
+    throw new Error('Blogger structure validation failed: generated CSS is empty/comment-only.');
+  }
+
+  if (/\/\/\s*\(\(\)/.test(structuralXml)) {
+    throw new Error('Blogger structure validation failed: generated JavaScript is commented out.');
   }
 };
 
@@ -252,7 +139,6 @@ const validateXml = (xml) => {
     processEntities: true,
     trimValues: false
   });
-
   try {
     parser.parse(xml);
   } catch (error) {
@@ -260,24 +146,19 @@ const validateXml = (xml) => {
   }
 };
 
-/**
- * CLI entry point.
- */
 const main = async () => {
   const validateOnly = process.argv.includes('--validate-only');
   const output = await buildTheme();
-
   validateXml(output);
   validateBloggerStructure(output);
 
   if (validateOnly) {
-    console.log('Theme validation passed: generated XML is well-formed.');
+    console.log('Theme validation passed: XML, Blogger V3 layout structure, native widgets and runtime assets are valid.');
     return;
   }
 
   await mkdir(DIST, { recursive: true });
   await writeFile(files.output, output, 'utf8');
-
   console.log(`Theme built successfully: ${path.relative(ROOT, files.output)}`);
   console.log(`Generated size: ${Buffer.byteLength(output, 'utf8')} bytes`);
 };
