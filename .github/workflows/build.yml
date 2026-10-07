@@ -8,7 +8,6 @@ on:
       - 'src/**'
       - 'build.js'
       - 'package.json'
-      - 'package-lock.json'
       - '.github/workflows/build.yml'
 
 permissions:
@@ -26,10 +25,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --no-audit --no-fund
 
       - name: Validate theme
         run: npm run validate
