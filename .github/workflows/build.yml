@@ -11,6 +11,10 @@ on:
       - 'package-lock.json'
       - '.github/workflows/build.yml'
 
+concurrency:
+  group: blogger-theme-build-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
