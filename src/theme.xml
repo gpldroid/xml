@@ -41,6 +41,31 @@
                 <b:widget-setting name='showShareButtons'>false</b:widget-setting>
               </b:widget-settings>
               {{INCLUDE_COMPONENT:post}}
+              <b:includable id='status-message'>
+                <b:if cond='data:statusMessage'>
+                  <div class='blog-status-message' role='status'>
+                    <data:statusMessage/>
+                  </div>
+                </b:if>
+              </b:includable>
+
+              <b:includable id='nextprev'>
+                <b:if cond='data:newerPageUrl or data:olderPageUrl'>
+                  <nav class='blog-pagination' aria-label='Post navigation'>
+                    <b:if cond='data:newerPageUrl'>
+                      <a class='blog-pagination__link blog-pagination__link--newer' expr:href='data:newerPageUrl' rel='prev'>
+                        <data:newerPageTitle/>
+                      </a>
+                    </b:if>
+                    <b:if cond='data:olderPageUrl'>
+                      <a class='blog-pagination__link blog-pagination__link--older' expr:href='data:olderPageUrl' rel='next'>
+                        <data:olderPageTitle/>
+                      </a>
+                    </b:if>
+                  </nav>
+                </b:if>
+              </b:includable>
+
               <b:includable id='main' var='top'>
                 <div class='blog-posts'>
                   <b:if cond='data:posts'>
@@ -54,6 +79,8 @@
                     </div>
                   </b:if>
                 </div>
+                <b:include name='status-message'/>
+                <b:include name='nextprev'/>
               </b:includable>
             </b:widget>
           </b:section>
