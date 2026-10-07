@@ -145,7 +145,7 @@ const validateBloggerStructure = (xml) => {
 
 
   const structuralChecks = [
-    ['root html element', /^<\?xml[^>]*>\s*<html\b/],
+    ['root html element', /^<\?xml[^>]*>\s*(?:<!DOCTYPE[^>]*>\s*)?<html\b/],
     ['Blogger V3 layouts version', /<html[^>]*\bb:layoutsVersion=['"]3['"]/],
     ['Blogger widget default version', /<html[^>]*\bb:defaultwidgetversion=['"]2['"]/],
     ['Blogger responsive mode', /<html[^>]*\bb:responsive=['"]true['"]/],
