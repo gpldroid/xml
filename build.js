@@ -103,6 +103,10 @@ const validateBloggerStructure = (xml) => {
     "xmlns:data='http://www.google.com/2005/gml/data'",
     "xmlns:expr='http://www.google.com/2005/gml/expr'",
     "<b:skin",
+    "id='header'",
+    "id='Header1'",
+    "id='navigation'",
+    "id='PageList1'",
     "id='main'",
     "id='Blog1'",
     "id='sidebar'",
@@ -121,11 +125,13 @@ const validateBloggerStructure = (xml) => {
   const count = (pattern) => (structuralXml.match(pattern) ?? []).length;
 
   const exactCounts = [
-    ['b:section', /<b:section\b/g, 2],
-    ['b:widget', /<b:widget\b/g, 2],
+    ['b:section', /<b:section\b/g, 4],
+    ['b:widget', /<b:widget\b/g, 4],
     ['b:skin', /<b:skin\b/g, 1],
     ['Blog1 widget', /id=['"]Blog1['"]/g, 1],
-    ['HTML1 widget', /id=['"]HTML1['"]/g, 1]
+    ['HTML1 widget', /id=['"]HTML1['"]/g, 1],
+    ['Header1 widget', /id=['"]Header1['"]/g, 1],
+    ['PageList1 widget', /id=['"]PageList1['"]/g, 1]
   ];
 
   for (const [label, pattern, expected] of exactCounts) {
@@ -140,17 +146,27 @@ const validateBloggerStructure = (xml) => {
 
   const structuralChecks = [
     ['root html element', /^<\?xml[^>]*>\s*<html\b/],
-    ['Blogger version', /<html[^>]*\bb:version=['"]2['"]/],
-    ['Blogger v2 class', /<html[^>]*\bclass=['"]v2['"]/],
+    ['Blogger V3 layouts version', /<html[^>]*\bb:layoutsVersion=['"]3['"]/],
+    ['Blogger widget default version', /<html[^>]*\bb:defaultwidgetversion=['"]2['"]/],
+    ['Blogger responsive mode', /<html[^>]*\bb:responsive=['"]true['"]/],
+    ['Header section id', /<b:section\b[^>]*\bid=['"]header['"]/],
+    ['Navigation section id', /<b:section\b[^>]*\bid=['"]navigation['"]/],
     ['main section id', /<b:section\b[^>]*\bid=['"]main['"]/],
     ['sidebar section id', /<b:section\b[^>]*\bid=['"]sidebar['"]/],
     ['Blog1 widget type', /<b:widget\b[^>]*\bid=['"]Blog1['"][^>]*\btype=['"]Blog['"]/],
     ['HTML1 widget type', /<b:widget\b[^>]*\bid=['"]HTML1['"][^>]*\btype=['"]HTML['"]/],
+    ['Header1 widget type', /<b:widget\b[^>]*\bid=['"]Header1['"][^>]*\btype=['"]Header['"]/],
+    ['PageList1 widget type', /<b:widget\b[^>]*\bid=['"]PageList1['"][^>]*\btype=['"]PageList['"]/],
+    ['Header1 widget version', /<b:widget\b[^>]*\bid=['"]Header1['"][^>]*\bversion=['"]2['"]/],
+    ['PageList1 widget version', /<b:widget\b[^>]*\bid=['"]PageList1['"][^>]*\bversion=['"]2['"]/],
+    ['Blog1 widget settings', /<b:widget\b[^>]*\bid=['"]Blog1['"][\s\S]*?<b:widget-settings>[\s\S]*?<b:widget-setting name=['"]showDateHeader['"]>/],
     ['Blog1 post includable', /<b:includable\b[^>]*\bid=['"]post['"][^>]*\bvar=['"]post['"]/],
     ['Blog1 main includable', /<b:includable\b[^>]*\bid=['"]main['"][^>]*\bvar=['"]top['"]/],
     ['Blog1 widget version', /<b:widget\b[^>]*\bid=['"]Blog1['"][^>]*\btype=['"]Blog['"][^>]*\bversion=['"]2['"]/],
     ['HTML1 widget version', /<b:widget\b[^>]*\bid=['"]HTML1['"][^>]*\btype=['"]HTML['"][^>]*\bversion=['"]2['"]/],
-    ['HTML1 main includable', /<b:widget\b[^>]*\bid=['"]HTML1['"][\s\S]*?<b:includable\b[^>]*\bid=['"]main['"]/]
+    ['HTML1 main includable', /<b:widget\b[^>]*\bid=['"]HTML1['"][\s\S]*?<b:includable\b[^>]*\bid=['"]main['"]/],
+    ['Header1 main includable', /<b:widget\b[^>]*\bid=['"]Header1['"][\s\S]*?<b:includable\b[^>]*\bid=['"]main['"]/],
+    ['PageList1 main includable', /<b:widget\b[^>]*\bid=['"]PageList1['"][\s\S]*?<b:includable\b[^>]*\bid=['"]main['"]/]
   ];
 
   for (const [label, pattern] of structuralChecks) {
@@ -177,6 +193,19 @@ const validateBloggerStructure = (xml) => {
 
   assertUnique('widget', widgetIds);
   assertUnique('section', sectionIds);
+
+  const forbiddenV2Markers = [
+    ["b:version='2'", /\bb:version=['"]2['"]/],
+    ["class='v2'", /\bclass=['"]v2['"]/]
+  ];
+
+  for (const [label, pattern] of forbiddenV2Markers) {
+    if (pattern.test(structuralXml)) {
+      throw new Error(
+        `Blogger structure validation failed: forbidden V2 marker ${label} found in a V3 theme.`
+      );
+    }
+  }
 
   const loopStart = structuralXml.indexOf("<b:loop values='data:posts' var='post'>");
   const includeStart = structuralXml.indexOf("<b:include data='post' name='post'/>", loopStart);
