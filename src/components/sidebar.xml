@@ -8,6 +8,7 @@
   <b:section
     id='sidebar'
     class='sidebar'
+    name='Sidebar'
     maxwidgets='5'
     showaddelement='yes'>
     <b:widget
