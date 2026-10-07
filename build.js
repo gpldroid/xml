@@ -111,7 +111,7 @@ const validateBloggerStructure = (xml) => {
 
   for (const [label, pattern] of required) {
     if (!pattern.test(xml)) {
-      throw new Error(\`Blogger structure validation failed: missing \${label}.\`);
+      throw new Error(`Blogger structure validation failed: missing ${label}.`);
     }
   }
 
@@ -129,7 +129,7 @@ const validateBloggerStructure = (xml) => {
     const actual = count(pattern);
     if (actual !== expected) {
       throw new Error(
-        \`Blogger structure validation failed: expected \${expected} \${label} element(s), found \${actual}.\`
+        `Blogger structure validation failed: expected ${expected} ${label} element(s), found ${actual}.`
       );
     }
   }
