@@ -4,6 +4,9 @@
   "private": true,
   "description": "Modular Blogger XML theme build pipeline.",
   "type": "module",
+  "engines": {
+    "node": ">=20 <21"
+  },
   "scripts": {
     "build": "node build.js",
     "validate": "node build.js --validate-only"
