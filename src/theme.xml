@@ -1,51 +1,46 @@
 <?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html>
 <html
-  b:version='2'
+  b:css='false'
   b:defaultwidgetversion='2'
   b:layoutsVersion='3'
   b:responsive='true'
-  class='v2'
+  b:templateVersion='1.0.0'
   expr:dir='data:blog.languageDirection'
+  expr:lang='data:blog.locale.language'
   xmlns='http://www.w3.org/1999/xhtml'
   xmlns:b='http://www.google.com/2005/gml/b'
   xmlns:data='http://www.google.com/2005/gml/data'
   xmlns:expr='http://www.google.com/2005/gml/expr'>
-
   <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1' name='viewport'/>
+    <b:include data='blog' name='all-head-content'/>
     <title><data:blog.pageTitle/></title>
     <meta expr:content='data:blog.metaDescription' name='description'/>
     <link expr:href='data:blog.url' rel='canonical'/>
-
     <b:skin><![CDATA[
       /* {{INCLUDE_CSS}} */
     ]]></b:skin>
   </head>
-
   <body>
     {{INCLUDE_COMPONENT:header}}
-
     <main class='site-main' id='main-content'>
       <div class='container content-layout'>
-
         <section class='content-area' aria-label='Main content'>
-          <b:section
-            id='main'
-            class='main'
-            maxwidgets='1'
-            showaddelement='no'>
-
-            <b:widget
-              id='Blog1'
-              type='Blog'
-              version='2'
-              locked='true'
-              title='Blog Posts'
-              visible='true'>
-
+          <b:section id='main' class='main' name='Main' maxwidgets='1' showaddelement='no' preferred='yes'>
+            <b:widget id='Blog1' type='Blog' version='2' locked='true' title='Blog Posts' visible='true'>
+              <b:widget-settings>
+                <b:widget-setting name='showDateHeader'>false</b:widget-setting>
+                <b:widget-setting name='showAuthor'>true</b:widget-setting>
+                <b:widget-setting name='showLabels'>true</b:widget-setting>
+                <b:widget-setting name='showTimestamp'>true</b:widget-setting>
+                <b:widget-setting name='showCommentLink'>true</b:widget-setting>
+                <b:widget-setting name='showBacklinks'>false</b:widget-setting>
+                <b:widget-setting name='showInlineAds'>false</b:widget-setting>
+                <b:widget-setting name='showShareButtons'>false</b:widget-setting>
+              </b:widget-settings>
               {{INCLUDE_COMPONENT:post}}
-
               <b:includable id='main' var='top'>
                 <div class='blog-posts'>
                   <b:if cond='data:posts'>
@@ -60,33 +55,18 @@
                   </b:if>
                 </div>
               </b:includable>
-
             </b:widget>
           </b:section>
         </section>
-
         {{INCLUDE_COMPONENT:sidebar}}
-
       </div>
     </main>
-
     <footer class='site-footer'>
       <div class='container site-footer__inner'>
-        <p>
-          &#169; <span class='current-year'>2026</span>
-          <data:blog.title/>. All rights reserved.
-        </p>
+        <p>&#169; <span class='current-year'>2026</span> <data:blog.title/>. All rights reserved.</p>
       </div>
     </footer>
-
-    <button
-      class='back-to-top'
-      type='button'
-      aria-label='Back to top'
-      aria-hidden='true'>
-      &#8593;
-    </button>
-
+    <button class='back-to-top' type='button' aria-label='Back to top' aria-hidden='true'>&#8593;</button>
     <script type='text/javascript'><![CDATA[
       // {{INCLUDE_JS}}
     ]]></script>
