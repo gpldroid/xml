@@ -436,6 +436,39 @@ button:active,
   }
 }
 
+.blog-comments {
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+}
+
+.blog-comments__title {
+  font-size: 1.25rem;
+}
+
+.blog-comments__content {
+  overflow-wrap: anywhere;
+}
+
+.blog-comments__form {
+  margin-top: var(--space-5);
+}
+
+.blog-comments__form iframe {
+  display: block;
+  width: 100%;
+  min-height: 275px;
+  border: 0;
+}
+
+.blog-comments__message {
+  color: var(--color-muted);
+}
+
+.blog-comments__add {
+  font-weight: 700;
+}
+
 .blog-post__comments {
   margin-top: var(--space-4);
   color: var(--color-muted);
