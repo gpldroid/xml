@@ -98,52 +98,60 @@ const buildTheme = async () => {
  * still needs to be performed by Blogger's theme editor/importer.
  */
 const validateBloggerStructure = (xml) => {
-  const required = [
-    ['xmlns:b', /xmlns:b=['"]http:\/\/www\.google\.com\/2005\/gml\/b['"]/],
-    ['xmlns:data', /xmlns:data=['"]http:\/\/www\.google\.com\/2005\/gml\/data['"]/],
-    ['xmlns:expr', /xmlns:expr=['"]http:\/\/www\.google\.com\/2005\/gml\/expr['"]/],
-    ['b:skin', /<b:skin(?:\s|>)/],
-    ['main section', /<b:section\b[^>]*\bid=['"]main['"]/],
-    ['Blog1 widget', /<b:widget\b[^>]*\bid=['"]Blog1['"][^>]*\btype=['"]Blog['"]/],
-    ['sidebar section', /<b:section\b[^>]*\bid=['"]sidebar['"]/],
-    ['sidebar HTML widget', /<b:widget\b[^>]*\bid=['"]HTML1['"][^>]*\btype=['"]HTML['"]/]
+  const requiredText = [
+    "xmlns:b='http://www.google.com/2005/gml/b'",
+    "xmlns:data='http://www.google.com/2005/gml/data'",
+    "xmlns:expr='http://www.google.com/2005/gml/expr'",
+    "<b:skin>",
+    "id='main'",
+    "id='Blog1'",
+    "id='sidebar'",
+    "id='HTML1'"
   ];
 
-  for (const [label, pattern] of required) {
-    if (!pattern.test(xml)) {
-      throw new Error(`Blogger structure validation failed: missing ${label}.`);
+  for (const value of requiredText) {
+    if (!xml.includes(value)) {
+      throw new Error(
+        `Blogger structure validation failed: missing required marker ${value}.`
+      );
     }
   }
 
   const count = (pattern) => (xml.match(pattern) ?? []).length;
-
   const exactCounts = [
     ['b:section', /<b:section\b/g, 2],
     ['b:widget', /<b:widget\b/g, 2],
     ['b:skin', /<b:skin\b/g, 1],
-    ['Blog1', /<b:widget\b[^>]*\bid=['"]Blog1['"]/g, 1],
-    ['HTML1', /<b:widget\b[^>]*\bid=['"]HTML1['"]/g, 1]
+    ['Blog1 widget', /id=['"]Blog1['"]/g, 1],
+    ['HTML1 widget', /id=['"]HTML1['"]/g, 1]
   ];
 
   for (const [label, pattern, expected] of exactCounts) {
     const actual = count(pattern);
     if (actual !== expected) {
       throw new Error(
-        `Blogger structure validation failed: expected ${expected} ${label} element(s), found ${actual}.`
+        `Blogger structure validation failed: expected ${expected} ${label}, found ${actual}.`
       );
     }
   }
 
   if (xml.includes('{{') || xml.includes('}}')) {
-    throw new Error('Blogger structure validation failed: unresolved template placeholder detected.');
+    throw new Error(
+      'Blogger structure validation failed: unresolved template placeholder detected.'
+    );
   }
 
   const loopStart = xml.indexOf("<b:loop values='data:posts' var='post'>");
   const postStart = xml.indexOf("<article class='blog-post'");
   const loopEnd = xml.indexOf('</b:loop>', loopStart);
 
-  if (loopStart === -1 || postStart === -1 || loopEnd === -1 ||
-      postStart < loopStart || postStart > loopEnd) {
+  if (
+    loopStart === -1 ||
+    postStart === -1 ||
+    loopEnd === -1 ||
+    postStart < loopStart ||
+    postStart > loopEnd
+  ) {
     throw new Error(
       'Blogger structure validation failed: post component is not inside the Blog1 post loop.'
     );
