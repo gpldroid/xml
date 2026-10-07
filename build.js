@@ -137,6 +137,43 @@ const validateBloggerStructure = (xml) => {
     }
   }
 
+
+  const structuralChecks = [
+    ['root html element', /^<\?xml[^>]*>\s*<html\b/],
+    ['Blogger version', /<html[^>]*\bb:version=['"]2['"]/],
+    ['Blogger v2 class', /<html[^>]*\bclass=['"]v2['"]/],
+    ['main section id', /<b:section\b[^>]*\bid=['"]main['"]/],
+    ['sidebar section id', /<b:section\b[^>]*\bid=['"]sidebar['"]/],
+    ['Blog1 widget type', /<b:widget\b[^>]*\bid=['"]Blog1['"][^>]*\btype=['"]Blog['"]/],
+    ['HTML1 widget type', /<b:widget\b[^>]*\bid=['"]HTML1['"][^>]*\btype=['"]HTML['"]/],
+    ['Blog1 main includable', /<b:includable\b[^>]*\bid=['"]main['"][^>]*\bvar=['"]top['"]/]
+  ];
+
+  for (const [label, pattern] of structuralChecks) {
+    if (!pattern.test(structuralXml)) {
+      throw new Error(
+        `Blogger structure validation failed: missing or invalid ${label}.`
+      );
+    }
+  }
+
+  const widgetIds = [...structuralXml.matchAll(/<b:widget\\b[^>]*\\bid=['"]([^'"]+)['"]/g)]
+    .map((match) => match[1]);
+  const sectionIds = [...structuralXml.matchAll(/<b:section\\b[^>]*\\bid=['"]([^'"]+)['"]/g)]
+    .map((match) => match[1]);
+
+  const assertUnique = (label, values) => {
+    const duplicates = values.filter((value, index) => values.indexOf(value) !== index);
+    if (duplicates.length > 0) {
+      throw new Error(
+        `Blogger structure validation failed: duplicate ${label} id(s): ${[...new Set(duplicates)].join(', ')}.`
+      );
+    }
+  };
+
+  assertUnique('widget', widgetIds);
+  assertUnique('section', sectionIds);
+
   const loopStart = structuralXml.indexOf("<b:loop values='data:posts' var='post'>");
   const postStart = structuralXml.indexOf("<article class='blog-post'");
   const loopEnd = structuralXml.indexOf('</b:loop>', loopStart);
