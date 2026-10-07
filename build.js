@@ -178,18 +178,23 @@ const validateBloggerStructure = (xml) => {
   assertUnique('section', sectionIds);
 
   const loopStart = structuralXml.indexOf("<b:loop values='data:posts' var='post'>");
-  const postStart = structuralXml.indexOf("<article class='blog-post'");
+  const includeStart = structuralXml.indexOf("<b:include data='post' name='post'/>", loopStart);
   const loopEnd = structuralXml.indexOf('</b:loop>', loopStart);
+  const postIncludableStart = structuralXml.indexOf("<b:includable id='post' var='post'>");
+  const postIncludableEnd = structuralXml.indexOf('</b:includable>', postIncludableStart);
 
   if (
     loopStart === -1 ||
-    postStart === -1 ||
+    includeStart === -1 ||
     loopEnd === -1 ||
-    postStart < loopStart ||
-    postStart > loopEnd
+    includeStart < loopStart ||
+    includeStart > loopEnd ||
+    postIncludableStart === -1 ||
+    postIncludableEnd === -1 ||
+    postIncludableStart > postIncludableEnd
   ) {
     throw new Error(
-      'Blogger structure validation failed: post component is not inside the Blog1 post loop.'
+      'Blogger structure validation failed: post includable/include flow is invalid.'
     );
   }
 };
