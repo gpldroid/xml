@@ -20,13 +20,10 @@
     <title><data:blog.pageTitle/></title>
     <meta expr:content='data:blog.metaDescription' name='description'/>
     <link expr:href='data:blog.url' rel='canonical'/>
-    <b:if cond='!data:view.isLayoutMode'>
-      <b:skin><![CDATA[
-        {{INCLUDE_CSS}}
-      ]]></b:skin>
-    </b:if>
-    <b:if cond='data:view.isLayoutMode'>
-      <b:template-skin><![CDATA[
+    <b:skin><![CDATA[
+      {{INCLUDE_CSS}}
+    ]]></b:skin>
+    <b:template-skin><![CDATA[
         body#layout { min-width: 0 !important; }
         body#layout .site-header,
         body#layout .site-navigation,
@@ -36,8 +33,7 @@
         body#layout .content-area { width: 100% !important; }
         body#layout .sidebar-area { width: 100% !important; }
         body#layout .section { margin: 0 0 18px !important; }
-      ]]></b:template-skin>
-    </b:if>
+    ]]></b:template-skin>
   </head>
   <body>
     {{INCLUDE_COMPONENT:header}}
