@@ -125,9 +125,9 @@ const validateBloggerStructure = (xml) => {
   const count = (pattern) => (structuralXml.match(pattern) ?? []).length;
 
   const exactCounts = [
-    ['b:section', /<b:section(?=\s|>))/g, 4],
-    ['b:widget', /<b:widget(?=\s|>))/g, 4],
-    ['b:skin', /<b:skin(?=\s|>/g, 1],
+    ['b:section', /<b:section(?=\s|>)/g, 4],
+    ['b:widget', /<b:widget(?=\s|>)/g, 4],
+    ['b:skin', /<b:skin(?=\s|>)/g, 1],
     ['Blog1 widget', /id=['"]Blog1['"]/g, 1],
     ['HTML1 widget', /id=['"]HTML1['"]/g, 1],
     ['Header1 widget', /id=['"]Header1['"]/g, 1],
@@ -149,24 +149,24 @@ const validateBloggerStructure = (xml) => {
     ['Blogger V3 layouts version', /<html[^>]*\bb:layoutsVersion=['"]3['"]/],
     ['Blogger widget default version', /<html[^>]*\bb:defaultwidgetversion=['"]2['"]/],
     ['Blogger responsive mode', /<html[^>]*\bb:responsive=['"]true['"]/],
-    ['Header section id', /<b:section(?=\s|>))[^>]*\bid=['"]header['"]/],
-    ['Navigation section id', /<b:section(?=\s|>))[^>]*\bid=['"]navigation['"]/],
-    ['main section id', /<b:section(?=\s|>))[^>]*\bid=['"]main['"]/],
-    ['sidebar section id', /<b:section(?=\s|>))[^>]*\bid=['"]sidebar['"]/],
-    ['Blog1 widget type', /<b:widget(?=\s|>))[^>]*\bid=['"]Blog1['"][^>]*\btype=['"]Blog['"]/],
-    ['HTML1 widget type', /<b:widget(?=\s|>))[^>]*\bid=['"]HTML1['"][^>]*\btype=['"]HTML['"]/],
-    ['Header1 widget type', /<b:widget(?=\s|>))[^>]*\bid=['"]Header1['"][^>]*\btype=['"]Header['"]/],
-    ['PageList1 widget type', /<b:widget(?=\s|>))[^>]*\bid=['"]PageList1['"][^>]*\btype=['"]PageList['"]/],
-    ['Header1 widget version', /<b:widget(?=\s|>))[^>]*\bid=['"]Header1['"][^>]*\bversion=['"]2['"]/],
-    ['PageList1 widget version', /<b:widget(?=\s|>))[^>]*\bid=['"]PageList1['"][^>]*\bversion=['"]2['"]/],
-    ['Blog1 widget settings', /<b:widget(?=\s|>))[^>]*\bid=['"]Blog1['"][\s\S]*?<b:widget-settings>[\s\S]*?<b:widget-setting name=['"]showDateHeader['"]>/],
+    ['Header section id', /<b:section(?=\s|>)[^>]*\bid=['"]header['"]/],
+    ['Navigation section id', /<b:section(?=\s|>)[^>]*\bid=['"]navigation['"]/],
+    ['main section id', /<b:section(?=\s|>)[^>]*\bid=['"]main['"]/],
+    ['sidebar section id', /<b:section(?=\s|>)[^>]*\bid=['"]sidebar['"]/],
+    ['Blog1 widget type', /<b:widget(?=\s|>)[^>]*\bid=['"]Blog1['"][^>]*\btype=['"]Blog['"]/],
+    ['HTML1 widget type', /<b:widget(?=\s|>)[^>]*\bid=['"]HTML1['"][^>]*\btype=['"]HTML['"]/],
+    ['Header1 widget type', /<b:widget(?=\s|>)[^>]*\bid=['"]Header1['"][^>]*\btype=['"]Header['"]/],
+    ['PageList1 widget type', /<b:widget(?=\s|>)[^>]*\bid=['"]PageList1['"][^>]*\btype=['"]PageList['"]/],
+    ['Header1 widget version', /<b:widget(?=\s|>)[^>]*\bid=['"]Header1['"][^>]*\bversion=['"]2['"]/],
+    ['PageList1 widget version', /<b:widget(?=\s|>)[^>]*\bid=['"]PageList1['"][^>]*\bversion=['"]2['"]/],
+    ['Blog1 widget settings', /<b:widget(?=\s|>)[^>]*\bid=['"]Blog1['"][\s\S]*?<b:widget-settings>[\s\S]*?<b:widget-setting name=['"]showDateHeader['"]>/],
     ['Blog1 post includable', /<b:includable\b[^>]*\bid=['"]post['"][^>]*\bvar=['"]post['"]/],
     ['Blog1 main includable', /<b:includable\b[^>]*\bid=['"]main['"][^>]*\bvar=['"]top['"]/],
-    ['Blog1 widget version', /<b:widget(?=\s|>))[^>]*\bid=['"]Blog1['"][^>]*\btype=['"]Blog['"][^>]*\bversion=['"]2['"]/],
-    ['HTML1 widget version', /<b:widget(?=\s|>))[^>]*\bid=['"]HTML1['"][^>]*\btype=['"]HTML['"][^>]*\bversion=['"]2['"]/],
-    ['HTML1 main includable', /<b:widget(?=\s|>))[^>]*\bid=['"]HTML1['"][\s\S]*?<b:includable\b[^>]*\bid=['"]main['"]/],
-    ['Header1 main includable', /<b:widget(?=\s|>))[^>]*\bid=['"]Header1['"][\s\S]*?<b:includable\b[^>]*\bid=['"]main['"]/],
-    ['PageList1 main includable', /<b:widget(?=\s|>))[^>]*\bid=['"]PageList1['"][\s\S]*?<b:includable\b[^>]*\bid=['"]main['"]/]
+    ['Blog1 widget version', /<b:widget(?=\s|>)[^>]*\bid=['"]Blog1['"][^>]*\btype=['"]Blog['"][^>]*\bversion=['"]2['"]/],
+    ['HTML1 widget version', /<b:widget(?=\s|>)[^>]*\bid=['"]HTML1['"][^>]*\btype=['"]HTML['"][^>]*\bversion=['"]2['"]/],
+    ['HTML1 main includable', /<b:widget(?=\s|>)[^>]*\bid=['"]HTML1['"][\s\S]*?<b:includable\b[^>]*\bid=['"]main['"]/],
+    ['Header1 main includable', /<b:widget(?=\s|>)[^>]*\bid=['"]Header1['"][\s\S]*?<b:includable\b[^>]*\bid=['"]main['"]/],
+    ['PageList1 main includable', /<b:widget(?=\s|>)[^>]*\bid=['"]PageList1['"][\s\S]*?<b:includable\b[^>]*\bid=['"]main['"]/]
   ];
 
   for (const [label, pattern] of structuralChecks) {
@@ -177,9 +177,9 @@ const validateBloggerStructure = (xml) => {
     }
   }
 
-  const widgetIds = [...structuralXml.matchAll(/<b:widget(?=\s|>))[^>]*\bid=['"]([^'"]+)['"]/g)]
+  const widgetIds = [...structuralXml.matchAll(/<b:widget(?=\s|>)[^>]*\bid=['"]([^'"]+)['"]/g)]
     .map((match) => match[1]);
-  const sectionIds = [...structuralXml.matchAll(/<b:section(?=\s|>))[^>]*\bid=['"]([^'"]+)['"]/g)]
+  const sectionIds = [...structuralXml.matchAll(/<b:section(?=\s|>)[^>]*\bid=['"]([^'"]+)['"]/g)]
     .map((match) => match[1]);
 
   const assertUnique = (label, values) => {
