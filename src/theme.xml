@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<html
+  b:version='2'
+  class='v2'
+  expr:dir='data:blog.languageDirection'
+  xmlns='http://www.w3.org/1999/xhtml'
+  xmlns:b='http://www.google.com/2005/gml/b'
+  xmlns:data='http://www.google.com/2005/gml/data'
+  xmlns:expr='http://www.google.com/2005/gml/expr'>
+
+  <head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1' name='viewport'/>
+    <title><data:blog.pageTitle/></title>
+    <meta expr:content='data:blog.metaDescription' name='description'/>
+    <link expr:href='data:blog.url' rel='canonical'/>
+
+    <b:skin><![CDATA[
+      /* {{INCLUDE_CSS}} */
+    ]]></b:skin>
+  </head>
+
+  <body>
+    {{INCLUDE_COMPONENT:header}}
+
+    <main class='site-main' id='main-content'>
+      <div class='container content-layout'>
+
+        <section class='content-area' aria-label='Main content'>
+          <b:section
+            id='main'
+            class='main'
+            maxwidgets='1'
+            showaddelement='no'>
+
+            <b:widget
+              id='Blog1'
+              type='Blog'
+              locked='true'
+              title='Blog Posts'
+              visible='true'>
+
+              <b:includable id='main' var='top'>
+                <div class='blog-posts'>
+                  <b:if cond='data:posts'>
+                    <b:loop values='data:posts' var='post'>
+                      {{INCLUDE_COMPONENT:post}}
+                    </b:loop>
+                  <b:else/>
+                    <div class='blog-post blog-post--empty'>
+                      <h2 class='blog-post__title'>No posts found</h2>
+                      <p class='blog-post__content'>There are no published posts to display.</p>
+                    </div>
+                  </b:if>
+                </div>
+              </b:includable>
+
+            </b:widget>
+          </b:section>
+        </section>
+
+        {{INCLUDE_COMPONENT:sidebar}}
+
+      </div>
+    </main>
+
+    <footer class='site-footer'>
+      <div class='container site-footer__inner'>
+        <p>
+          &#169; <span class='current-year'>2026</span>
+          <data:blog.title/>. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <button
+      class='back-to-top'
+      type='button'
+      aria-label='Back to top'
+      aria-hidden='true'>
+      &#8593;
+    </button>
+
+    <script type='text/javascript'><![CDATA[
+      // {{INCLUDE_JS}}
+    ]]></script>
+  </body>
+</html>
